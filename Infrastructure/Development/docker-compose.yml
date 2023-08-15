@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  envoy:
+      image: envoyproxy/envoy:v1.26.3
+      volumes:
+        - ./envoy.yaml:/etc/envoy/envoy.yaml
+      ports:
+        - "9901:9901" # admin endpoint
+        - "10000:10000" # your configured listener
+  serviceoneapi:
+    image: serviceoneapi
+    build:
+      context: ../../ServiceOne/src/ServiceOne.API
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+  servicetwoapi:
+    image: servicetwoapi
+    build:
+      context: ../../ServiceTwo/src/ServiceTwo.API
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
